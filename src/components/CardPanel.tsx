@@ -3,6 +3,8 @@
 import Card from './Card';
 import { useReducer } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Rating } from '@mui/material';
 
 type RatingAction = {
   type: 'UPDATE_RATING';
@@ -58,15 +60,29 @@ export default function CardPanel() {
       <div style={{margin: '20px', display:'flex', flexDirection:'row', flexWrap:'wrap', justifyContent:'space-around', alignContent:'space-around'}}>
         {
           mockVenueRepo.map((venue) => (
-            <Link href={'/venue/' + venue.vid} className = 'w-1/4'>
-              <Card 
-                key={venue.vid}
-                venueName={venue.venueName} 
-                imgSrc={venue.imgSrc} 
-                rating={ratings.get(venue.venueName) || 0}
-                onRatingChange={handleRatingChange}
-              />
-            </Link>
+            <div key={venue.vid} className="w-1/4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 h-[400px] overflow-hidden flex flex-col">
+              <Link href={'/venue/' + venue.vid} className="block flex-grow">
+                <div className='w-full h-[70%] relative'>
+                  <Image src={venue.imgSrc} alt={venue.venueName} fill={true} className='object-cover' />
+                </div>
+                <div className='p-[10px]'>
+                  <div className='text-2xl text-black'>{venue.venueName}</div>
+                </div>
+              </Link>
+              <div className='p-[10px]'>
+                <Rating
+                  name={venue.venueName + ' Rating'}
+                  id={venue.venueName + ' Rating'}
+                  data-testid={venue.venueName + ' Rating'}
+                  value={ratings.get(venue.venueName) || 0}
+                  onChange={(event, newValue) => {
+                    if (newValue !== null) {
+                      handleRatingChange(venue.venueName, newValue);
+                    }
+                  }}
+                />
+              </div>
+            </div>
           ))
         }
       </div>
